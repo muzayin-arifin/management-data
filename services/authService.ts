@@ -1,9 +1,7 @@
 
-import { JsonDb } from '@/lib/db/jsonDb';
+import { getDb, Collections } from '@/lib/db/mongodb';
 import { signToken } from '@/lib/jwt';
 import { cookies } from 'next/headers';
-
-const usersDb = new JsonDb('users.json');
 
 interface User {
   id: string;
@@ -18,8 +16,15 @@ export class AuthService {
     try {
       console.log(`[AuthService] Attempting login for: ${email}`);
       
-      // Find user in JSON database
-      const user = usersDb.findOne<User>(u => u.email === email || u.email === email.toLowerCase());
+      const db = await getDb();
+      
+      // Find user in MongoDB
+      const user = await db.collection<User>(Collections.USERS).findOne({
+        $or: [
+          { email: email },
+          { email: email.toLowerCase() }
+        ]
+      });
 
       if (!user) {
         console.warn('[AuthService] User not found');
@@ -61,8 +66,10 @@ export class AuthService {
 
   static async register(email: string, password: string, name: string): Promise<{ success: boolean; error?: string }> {
     try {
+      const db = await getDb();
+      
       // Check if user exists
-      const existing = usersDb.findOne<User>(u => u.email === email);
+      const existing = await db.collection<User>(Collections.USERS).findOne({ email });
       
       if (existing) {
         return { success: false, error: 'User already exists' };
@@ -77,7 +84,7 @@ export class AuthService {
         role: 'student'
       };
 
-      usersDb.insert(newUser);
+      await db.collection(Collections.USERS).insertOne(newUser);
       
       return { success: true };
     } catch (err: any) {
