@@ -1,20 +1,22 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { Loader2, CheckCircle2, AlertCircle, Copy } from 'lucide-react'
-
-// Manual client creation to avoid hook issues if env varies, though using lib is fine.
-// Using defaults from env.
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabase = createClient(supabaseUrl, supabaseKey)
 
 export default function SetupPage() {
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState<string>('')
+
+  // Create Supabase client lazily inside component to avoid build-time errors
+  const supabase = useMemo<SupabaseClient | null>(() => {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (!supabaseUrl || !supabaseKey) return null
+    return createClient(supabaseUrl, supabaseKey)
+  }, [])
   
   const schemaSQL = `
 -- COPY AND RUN THIS IN SUPABASE SQL EDITOR
@@ -48,6 +50,9 @@ ON CONFLICT (email) DO NOTHING;
     setLoading(true)
     setStatus('Attempting to seed tables...')
     try {
+        if (!supabase) {
+          throw new Error('Supabase client not configured. Please check your environment variables.')
+        }
         // Try insert a student
         const { error } = await supabase.from('students').insert([
             { student_id: '1001', name: 'Alice Johnson', major: 'CS', semester: 3, age: 20 },
