@@ -34,7 +34,7 @@ yarn-error.log*
 .env*
 
 # JSON database (persistent data)
-/data/*.json
+
 
 # vercel
 .vercel

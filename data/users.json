@@ -1,0 +1,38 @@
+[
+  {
+    "id": "user-001",
+    "email": "admin@example.com",
+    "password": "$2b$10$Jp1IY9Iko/tlqMjwyywR3OChySlynJNMEjVwK9tAhM0eo1TaYZT0W",
+    "name": "Admin User",
+    "role": "admin"
+  },
+  {
+    "id": "user-002",
+    "email": "muzayin",
+    "password": "12345",
+    "name": "Muzayin",
+    "role": "admin"
+  },
+  {
+    "id": "user-1765907630303",
+    "email": "akbar@example.com",
+    "password": "123",
+    "name": "akbar",
+    "role": "student"
+  },
+  {
+    "id": "user-muzayin-001",
+    "email": "muzayin@example.com",
+    "username": "muzayin",
+    "password": "$2b$10$1gz9vI.pS8kw46gI0bOumuhQcqqXtpDYAIIlG79WoYZwUSUstRPG.",
+    "name": "Muzayin",
+    "role": "admin"
+  },
+  {
+    "id": "user-1766118819890",
+    "email": "muzayin@gmail.com",
+    "password": "$2b$10$6ej7DlqtiKaYFY9Is2rXHOwCLXg3rDSsYsm2pkmjsUKr9Rr1qq.hi",
+    "name": "muzayin",
+    "role": "student"
+  }
+]

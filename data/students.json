@@ -1,0 +1,59 @@
+[
+  {
+    "id": "std-1765904668036",
+    "name": "akbar",
+    "student_id": "2410114002781",
+    "major": "informatika",
+    "semester": 6,
+    "email": "akbarjember@gmail.com",
+    "created_at": "2025-12-16T17:04:28.036Z"
+  },
+  {
+    "id": "std-1765940701526",
+    "name": "dimas",
+    "student_id": "241011200382",
+    "major": "Informatika",
+    "semester": 7,
+    "email": "dimaskanjeng@gmail.com",
+    "created_at": "2025-12-17T03:05:01.526Z"
+  },
+  {
+    "id": "std-seed-001",
+    "student_id": "1001",
+    "name": "Alice Johnson",
+    "major": "Computer Science",
+    "semester": 3,
+    "email": "alice@example.com",
+    "age": 20,
+    "created_at": "2025-12-19T04:01:33.832Z"
+  },
+  {
+    "id": "std-seed-002",
+    "student_id": "1002",
+    "name": "Budi Santoso",
+    "major": "Sistem Informasi",
+    "semester": 5,
+    "email": "budi@example.com",
+    "age": 21,
+    "created_at": "2025-12-19T04:01:33.832Z"
+  },
+  {
+    "id": "std-seed-003",
+    "student_id": "1003",
+    "name": "Citra Lestari",
+    "major": "Teknik Informatika",
+    "semester": 1,
+    "email": "citra@example.com",
+    "age": 18,
+    "created_at": "2025-12-19T04:01:33.832Z"
+  },
+  {
+    "id": "std-1766117871546",
+    "name": "mumu",
+    "student_id": "241011400274",
+    "major": "Informatika",
+    "semester": 4,
+    "email": "mumu@gmail.com",
+    "created_at": "2025-12-19T04:17:51.546Z"
+  }
+]
