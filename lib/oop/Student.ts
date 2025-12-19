@@ -7,6 +7,7 @@ export interface StudentProps {
   student_id: string; // NIM
   major: string;
   semester: number;
+  ipk: number;
   email: string;
 }
 
@@ -15,6 +16,7 @@ export const studentSchema = z.object({
   student_id: z.string().regex(/^[0-9]+$/, 'Student ID must be numeric').min(5),
   major: z.string().min(2),
   semester: z.number().int().min(1).max(14),
+  ipk: z.number().min(0.00, 'IPK must be at least 0.00').max(4.00, 'IPK cannot exceed 4.00'),
   email: z.string().email().regex(/^[\w.-]+@[\w.-]+\.\w+$/, 'Invalid email format'),
 });
 
@@ -24,6 +26,7 @@ export class Student {
   private _student_id: string;
   private _major: string;
   private _semester: number;
+  private _ipk: number;
   private _email: string;
 
   constructor(props: StudentProps) {
@@ -32,6 +35,7 @@ export class Student {
     this._student_id = props.student_id;
     this._major = props.major;
     this._semester = props.semester;
+    this._ipk = props.ipk;
     this._email = props.email;
   }
 
@@ -42,6 +46,7 @@ export class Student {
   get student_id() { return this._student_id; }
   get major() { return this._major; }
   get semester() { return this._semester; }
+  get ipk() { return this._ipk; }
   get email() { return this._email; }
 
   // Validation
@@ -51,6 +56,7 @@ export class Student {
       student_id: this._student_id,
       major: this._major,
       semester: this._semester,
+      ipk: this._ipk,
       email: this._email,
     });
     return { success: result.success, error: result.success ? undefined : result.error };
@@ -64,6 +70,7 @@ export class Student {
       student_id: this._student_id,
       major: this._major,
       semester: this._semester,
+      ipk: this._ipk,
       email: this._email,
     };
   }

@@ -1,46 +1,26 @@
 
-import { getDb, Collections } from '@/lib/db/mongodb';
+import { JsonDb } from '@/lib/db/jsonDb';
 import { Student, StudentProps } from '@/lib/oop/Student';
-import { ObjectId } from 'mongodb';
 
 export class StudentService {
+  private static db = new JsonDb('students.json');
+
   static async getAll() {
-    const db = await getDb();
-    const students = await db.collection(Collections.STUDENTS)
-      .find({})
-      .sort({ created_at: -1 })
-      .toArray();
-    
-    // Transform _id to id for frontend compatibility
-    return students.map(s => ({
-      ...s,
-      id: s._id.toString(),
-      _id: undefined
-    }));
+    // Read directly from JSON file
+    const students = this.db.read<StudentProps>();
+    // Sort by creation time if available, or just reverse to show newest first
+    return students.reverse(); 
   }
 
   static async getById(id: string) {
-    const db = await getDb();
-    
-    // Try to find by custom id first, then by MongoDB _id
-    let student = await db.collection(Collections.STUDENTS).findOne({ id });
-    
-    if (!student && ObjectId.isValid(id)) {
-      student = await db.collection(Collections.STUDENTS).findOne({ _id: new ObjectId(id) });
-    }
+    const student = this.db.findOne<StudentProps>((s) => s.id === id);
     
     if (!student) throw new Error("Student not found");
     
-    return {
-      ...student,
-      id: student.id || student._id.toString(),
-      _id: undefined
-    };
+    return student;
   }
 
   static async create(studentProps: StudentProps) {
-    const db = await getDb();
-    
     // OOP Validation
     const student = new Student(studentProps);
     const validation = student.validate();
@@ -48,58 +28,33 @@ export class StudentService {
       throw new Error("Validation Error: " + validation.error?.message);
     }
 
-    const newStudent = {
+    const newStudent: StudentProps & { created_at: string } = {
       ...student.toJSON(),
       id: `std-${Date.now()}`,
       created_at: new Date().toISOString()
     };
 
-    await db.collection(Collections.STUDENTS).insertOne(newStudent);
+    this.db.insert(newStudent);
     return newStudent;
   }
 
   static async update(id: string, updates: Partial<StudentProps>) {
-    const db = await getDb();
-    
-    // Try to update by custom id first
-    let result = await db.collection(Collections.STUDENTS).findOneAndUpdate(
-      { id },
-      { $set: updates },
-      { returnDocument: 'after' }
+    const updatedStudent = this.db.update<StudentProps>(
+      (s) => s.id === id,
+      updates
     );
     
-    // If not found by custom id, try by MongoDB _id
-    if (!result && ObjectId.isValid(id)) {
-      result = await db.collection(Collections.STUDENTS).findOneAndUpdate(
-        { _id: new ObjectId(id) },
-        { $set: updates },
-        { returnDocument: 'after' }
-      );
-    }
-    
-    if (!result) {
+    if (!updatedStudent) {
       throw new Error("Student not found");
     }
     
-    return {
-      ...result,
-      id: result.id || result._id.toString(),
-      _id: undefined
-    };
+    return updatedStudent;
   }
 
   static async delete(id: string) {
-    const db = await getDb();
+    const isDeleted = this.db.delete<StudentProps>((s) => s.id === id);
     
-    // Try to delete by custom id first
-    let result = await db.collection(Collections.STUDENTS).deleteOne({ id });
-    
-    // If not deleted, try by MongoDB _id
-    if (result.deletedCount === 0 && ObjectId.isValid(id)) {
-      result = await db.collection(Collections.STUDENTS).deleteOne({ _id: new ObjectId(id) });
-    }
-    
-    if (result.deletedCount === 0) {
+    if (!isDeleted) {
       throw new Error("Student not found or already deleted");
     }
     

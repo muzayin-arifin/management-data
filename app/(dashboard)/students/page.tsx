@@ -41,6 +41,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default function StudentsPage() {
   const router = useRouter()
@@ -295,40 +296,70 @@ export default function StudentsPage() {
       {/* Table */}
       <div className="rounded-md border border-slate-800 overflow-hidden">
          <Table>
-           <TableHeader className="bg-slate-900">
-             <TableRow className="border-slate-800 hover:bg-slate-900">
-               <TableHead className="text-slate-400">Student ID</TableHead>
-               <TableHead className="text-slate-400">Name</TableHead>
-               <TableHead className="text-slate-400">Major</TableHead>
-               <TableHead className="text-slate-400">Semester</TableHead>
-               <TableHead className="text-slate-400">Email</TableHead>
-               <TableHead className="text-right text-slate-400">Actions</TableHead>
-             </TableRow>
-           </TableHeader>
+            <TableHeader className="bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10">
+              <TableRow className="border-slate-800 hover:bg-slate-900/50 transition-colors">
+                <TableHead className="text-xs uppercase tracking-wider font-semibold text-slate-400 pl-4 py-4">NIM</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider font-semibold text-slate-400">Name</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider font-semibold text-slate-400">Major</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider font-semibold text-slate-400 text-center">Sem</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider font-semibold text-slate-400">IPK</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider font-semibold text-slate-400">Email</TableHead>
+                <TableHead className="text-right text-xs uppercase tracking-wider font-semibold text-slate-400 pr-4">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
            <TableBody>
              {loading ? (
                 <TableRow>
-                   <TableCell colSpan={6} className="h-24 text-center text-slate-400">Loading...</TableCell>
+                   <TableCell colSpan={7} className="h-24 text-center text-slate-400">Loading...</TableCell>
                 </TableRow>
              ) : displayStudents.length === 0 ? (
                 <TableRow>
-                   <TableCell colSpan={6} className="h-24 text-center text-slate-400">No students found.</TableCell>
+                   <TableCell colSpan={7} className="h-24 text-center text-slate-400">No students found.</TableCell>
                 </TableRow>
              ) : (
                 displayStudents.map((student) => (
-                  <TableRow key={student.id} className="border-slate-800 hover:bg-slate-900/50">
-                    <TableCell className="font-mono text-slate-300">{student.student_id}</TableCell>
-                    <TableCell className="font-medium text-slate-200">{student.name}</TableCell>
-                    <TableCell className="text-slate-300">{student.major}</TableCell>
-                    <TableCell className="text-slate-300">{student.semester}</TableCell>
-                    <TableCell className="text-slate-300">{student.email}</TableCell>
-                    <TableCell className="text-right">
-                       <Button variant="ghost" size="icon" className="hover:text-indigo-400" onClick={() => { setEditingId(student.id); setIsOpen(true); }}>
-                          <Edit className="h-4 w-4" />
-                       </Button>
-                       <Button variant="ghost" size="icon" className="hover:text-red-400" onClick={() => setDeleteId(student.id)}>
-                          <Trash2 className="h-4 w-4" />
-                       </Button>
+                  <TableRow key={student.id} className="border-slate-800/50 hover:bg-slate-800/50 transition-colors group">
+                    <TableCell className="font-mono text-xs pl-4">
+                       <span className="bg-slate-950 px-2 py-1 rounded text-slate-400 border border-slate-800 group-hover:border-indigo-500/30 transition-colors">
+                           {student.student_id}
+                       </span>
+                    </TableCell>
+                    <TableCell>
+                       <div className="flex items-center gap-3">
+                           <Avatar className="h-8 w-8 border border-slate-700">
+                               <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${student.name}`} />
+                               <AvatarFallback className="bg-indigo-900 text-indigo-200 text-xs">
+                                   {student.name.substring(0,2).toUpperCase()}
+                               </AvatarFallback>
+                           </Avatar>
+                           <span className="font-medium text-slate-200">{student.name}</span>
+                       </div>
+                    </TableCell>
+                    <TableCell>
+                       <span className="inline-flex items-center rounded-full bg-indigo-500/10 px-2.5 py-0.5 text-xs font-medium text-indigo-400 ring-1 ring-inset ring-indigo-500/20">
+                           {student.major}
+                       </span>
+                    </TableCell>
+                    <TableCell className="text-center">
+                       <span className="text-slate-300 font-medium">{student.semester}</span>
+                    </TableCell>
+                    <TableCell>
+                       <span className={`font-medium ${student.ipk >= 3.5 ? 'text-emerald-400' : student.ipk >= 3.0 ? 'text-blue-400' : 'text-yellow-400'}`}>
+                           {student.ipk.toFixed(2)}
+                       </span>
+                    </TableCell>
+                    <TableCell className="text-slate-400 text-sm max-w-[150px] truncate" title={student.email}>
+                       {student.email}
+                    </TableCell>
+                    <TableCell className="text-right pr-4">
+                       <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                           <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-indigo-400 hover:bg-indigo-500/10" onClick={() => { setEditingId(student.id); setIsOpen(true); }}>
+                              <Edit className="h-4 w-4" />
+                           </Button>
+                           <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-red-400 hover:bg-red-500/10" onClick={() => setDeleteId(student.id)}>
+                              <Trash2 className="h-4 w-4" />
+                           </Button>
+                       </div>
                     </TableCell>
                   </TableRow>
                 ))

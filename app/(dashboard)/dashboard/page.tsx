@@ -15,8 +15,10 @@ export default async function DashboardPage() {
   try {
      students = await StudentService.getAll();
      totalStudents = students.length;
-     const uniqueMajors = new Set(students.map((s: any) => s.major));
-     activeMajors = uniqueMajors.size;
+     if (totalStudents > 0) {
+        const uniqueMajors = new Set(students.map((s: any) => s.major));
+        activeMajors = uniqueMajors.size;
+     }
   } catch (e) {
      console.error("Failed to load stats", e);
   }
@@ -49,7 +51,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent className="z-10 relative">
             <div className="text-4xl font-bold text-white tracking-tight">{activeMajors}</div>
-            <p className="text-xs text-pink-300/60 mt-2 font-medium">Across all semesters</p>
+            <p className="text-xs text-pink-300/60 mt-2 font-medium">Across all students</p>
           </CardContent>
         </Card>
       </div>

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { LogOut, GraduationCap } from "lucide-react";
@@ -21,7 +20,7 @@ export function Header() {
         <div className="bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 w-10 h-10 rounded-xl shadow-lg shadow-indigo-500/30 flex items-center justify-center">
             <GraduationCap className="h-6 w-6 text-white" />
         </div>
-        <h1 className="text-2xl font-bold text-white tracking-tight drop-shadow-sm">
+        <h1 className="text-2xl font-bold text-white tracking-tight drop-shadow-sm hidden md:block">
           Manajemen <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Mahasiswa</span>
         </h1>
       </div>

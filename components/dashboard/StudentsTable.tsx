@@ -448,6 +448,7 @@ export function StudentsTable({ initialData }: { initialData: StudentProps[] }) 
                       </span>
                     </TableCell>
                     <TableCell className="text-slate-300 text-center">{student.semester}</TableCell>
+                    <TableCell className="text-slate-300 text-center font-mono text-xs">{student.ipk?.toFixed(2)}</TableCell>
                     <TableCell className="text-slate-400 text-sm">{student.email}</TableCell>
                     <TableCell className="text-right">
                        <div className="flex justify-end gap-1">

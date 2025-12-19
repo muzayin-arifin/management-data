@@ -1,7 +1,8 @@
 
-import { getDb, Collections } from '@/lib/db/mongodb';
+import { JsonDb } from '@/lib/db/jsonDb';
 import { signToken } from '@/lib/jwt';
 import { cookies } from 'next/headers';
+import bcrypt from 'bcrypt';
 
 interface User {
   id: string;
@@ -12,19 +13,16 @@ interface User {
 }
 
 export class AuthService {
+  private static db = new JsonDb('users.json');
+
   static async login(email: string, password: string): Promise<{ success: boolean; error?: string }> {
     try {
       console.log(`[AuthService] Attempting login for: ${email}`);
       
-      const db = await getDb();
-      
-      // Find user in MongoDB
-      const user = await db.collection<User>(Collections.USERS).findOne({
-        $or: [
-          { email: email },
-          { email: email.toLowerCase() }
-        ]
-      });
+      // Find user by Email
+      const user = this.db.findOne<User>((u) => 
+        u.email.toLowerCase() === email.toLowerCase()
+      );
 
       if (!user) {
         console.warn('[AuthService] User not found');
@@ -33,8 +31,9 @@ export class AuthService {
 
       console.log(`[AuthService] User found: ${user.email}, Role: ${user.role}`);
 
-      // Verify password (plain text comparison for simplicity)
-      if (password !== user.password) {
+      // Verify password (BCrypt)
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
         console.warn('[AuthService] Invalid password');
         return { success: false, error: 'Invalid password' };
       }
@@ -66,25 +65,28 @@ export class AuthService {
 
   static async register(email: string, password: string, name: string): Promise<{ success: boolean; error?: string }> {
     try {
-      const db = await getDb();
-      
       // Check if user exists
-      const existing = await db.collection<User>(Collections.USERS).findOne({ email });
+      const existing = this.db.findOne<User>((u) => 
+        u.email.toLowerCase() === email.toLowerCase()
+      );
       
       if (existing) {
         return { success: false, error: 'User already exists' };
       }
 
+      // Hash Password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       // Create new user
       const newUser: User = {
         id: `user-${Date.now()}`,
         email,
-        password, // Plain text for demo
+        password: hashedPassword,
         name,
         role: 'student'
       };
 
-      await db.collection(Collections.USERS).insertOne(newUser);
+      this.db.insert(newUser);
       
       return { success: true };
     } catch (err: any) {
@@ -102,6 +104,9 @@ export class AuthService {
     const token = cookieStore.get('auth-token')?.value;
     if (!token) return null;
     
+    // We can't verify here easily without circular dep or extra logic, 
+    // but typically we verify token to get payload.
+    // For now returning token exists check or implemented verifyToken usage elsewhere.
     return { token };
   }
 }

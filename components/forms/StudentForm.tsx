@@ -31,6 +31,7 @@ export function StudentForm({ initialData, onSubmit, onCancel }: StudentFormProp
       student_id: "",
       major: "",
       semester: 1,
+
       email: ""
     },
   })
@@ -64,7 +65,7 @@ export function StudentForm({ initialData, onSubmit, onCancel }: StudentFormProp
          {errors.email && <p className="text-destructive text-sm">{errors.email.message}</p>}
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="grid gap-2">
             <Label htmlFor="major">Major</Label>
             <Controller
@@ -85,6 +86,7 @@ export function StudentForm({ initialData, onSubmit, onCancel }: StudentFormProp
             />
             {errors.major && <p className="text-destructive text-sm">{errors.major.message}</p>}
         </div>
+
         <div className="grid gap-2">
             <Label htmlFor="semester">Semester</Label>
             <Input 
@@ -96,6 +98,8 @@ export function StudentForm({ initialData, onSubmit, onCancel }: StudentFormProp
             />
             {errors.semester && <p className="text-destructive text-sm">{errors.semester.message}</p>}
         </div>
+
+
       </div>
 
       <div className="flex justify-end gap-2 pt-4">
